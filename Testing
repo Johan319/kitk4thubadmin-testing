@@ -101,18 +101,28 @@ end
 getgenv().KitKatConfig = {
     SpecialTags = {
         ["Prulaki"] = "Owner",
-        ["johnCyrusPlana3"] = "Mods"
+        ["Testers533"] = "Mods"
+        -- Ranks: Members | Mods | Admin | HeadAdmin | Co owner | Owner
     }
 }
 
 local ActiveTags = {}
 
--- Auto whitelist: Anyone who runs the script gets added automatically
+-- Ranks that can open the Admin Panel
+local PanelRanks = {
+    ["Mods"] = true,
+    ["Admin"] = true,
+    ["HeadAdmin"] = true,
+    ["Co owner"] = true,
+    ["Owner"] = true
+}
+
+-- Auto whitelist: Anyone who runs the script gets added as "Members"
 local function AutoWhitelist()
     local name = LocalPlayer.Name
     if not getgenv().KitKatConfig.SpecialTags[name] then
-        getgenv().KitKatConfig.SpecialTags[name] = "User"
-        print("✅ Auto-whitelisted: " .. name)
+        getgenv().KitKatConfig.SpecialTags[name] = "Members"
+        print("✅ Auto-whitelisted as Members: " .. name)
     end
 end
 AutoWhitelist()
@@ -129,6 +139,11 @@ local function GetCargo(playerName)
         return getgenv().KitKatConfig.SpecialTags[playerName]
     end
     return ""
+end
+
+local function CanOpenPanel(playerName)
+    local rank = GetCargo(playerName)
+    return PanelRanks[rank] == true
 end
 
 local function RemovePlayerTag(playerName)
@@ -1932,17 +1947,26 @@ KitK4t_USERS = KitK4t_USERS or {}
 KitK4t_USERS[LocalPlayer.Name] = true
 
 if not IsPlayerAuthorized(LocalPlayer.Name) then
-    warn("⚠️ You are not authorized to use Admin Panel")
+    warn("⚠️ You are not authorized to use this script")
     warn("⚠️ Your username: " .. LocalPlayer.Name)
     return
 end
 
+local myRank = GetCargo(LocalPlayer.Name)
 print("✅ Authorized user: " .. LocalPlayer.Name)
-print("✅ Rank: " .. GetCargo(LocalPlayer.Name))
+print("✅ Rank: " .. myRank)
+
+-- Members can use the script (receive commands) but do NOT get the Admin Panel
+if not CanOpenPanel(LocalPlayer.Name) then
+    print("ℹ️ Rank 'Members' detected — Admin Panel is disabled for this rank.")
+    print("ℹ️ You can still receive board commands.")
+    return
+end
+
 print("✅ Loading Admin Panel...")
 
 -- ================================
--- CARREGAR WINDUI
+-- LOAD WINDUI
 -- ================================
 local WindUI
 local Version = "1.4.0"
@@ -1951,18 +1975,18 @@ local success, result = pcall(function()
     local url = "https://github.com/Footagesus/WindUI/releases/download/" .. Version .. "/main.lua"
     local source = game:HttpGet(url, true)
     local loader = loadstring(source)
-    if loader then return loader() else error("Falha no loadstring da WindUI") end
+    if loader then return loader() else error("Failed to loadstring WindUI") end
 end)
 
 if success and result then
     WindUI = result
 else
-    warn("[KitK4t Hub] Falha ao carregar WindUI.")
+    warn("[Admin Panel] Failed to load WindUI.")
     warn(result)
     return
 end
 
-print("✅ WindUI carregado com sucesso!")
+print("✅ WindUI loaded successfully!")
 task.wait(0.5)
 
 -- ================================
@@ -2312,8 +2336,8 @@ TabMorphs:Button({ Title = "/goner", Desc = "Transforma no Goner com skin e sons
     if MorphTargetName ~= "" then EnviarBoard("goner", MorphTargetName) end
 end })
 
-print("✅ Admin Panel loaded!")
-print("📌 Minimize the window to see the floating button 'Admin Panel'")
+print("✅ KitK4t Hub Admin carregado!")
+print("📌 Minimize a janela para ver o botão flutuante 'KitK4t HUB'")
 
 local sound = Instance.new("Sound")
 sound.SoundId = "rbxassetid://8486683243"
