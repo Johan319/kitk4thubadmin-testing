@@ -100,8 +100,7 @@ end
 -- ========================================
 getgenv().KitKatConfig = {
     SpecialTags = {
-        ["Prulaki"] = "Owner",
-        ["Testers533"] = "Mods"
+        ["Prulaki"] = "Owner"
         -- Ranks: Members | Mods | Admin | HeadAdmin | Co owner | Owner
     }
 }
@@ -1986,7 +1985,7 @@ else
     return
 end
 
-print("✅ WindUI loaded successfully!")
+print("✅ WindUI carregado com sucesso!")
 task.wait(0.5)
 
 -- ================================
