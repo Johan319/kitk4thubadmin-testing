@@ -101,7 +101,7 @@ end
 getgenv().KitKatConfig = {
     SpecialTags = {
         ["Prulaki"] = "Owner",
-        ["Testers533"] = "Mods"
+        ["johnCyrusPlana3"] = "Mods"
     }
 }
 
